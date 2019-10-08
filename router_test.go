@@ -9,7 +9,7 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	router := NewRouter()
+	router := newRouter()
 	req := httptest.NewRequest(http.MethodGet, "/hello", nil)
 	rec := httptest.NewRecorder()
 
