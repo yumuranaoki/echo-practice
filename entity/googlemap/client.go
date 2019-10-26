@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	Entity "github.com/yumuranaoki/echo-practice/entity"
+	Entity "github.com/yumuranaoki/date/entity"
 )
 
 type APIClient struct {
@@ -15,14 +15,14 @@ type APIClient struct {
 }
 
 type Strategy interface {
-	formatquery([]string) string
-	baseURL() string
-	options() string
+	Formatquery([]string) string
+	BaseURL() string
+	Options() string
 }
 
-func (client APIClient) Get(keywords []string) Entity.Place {
+func (client APIClient) Get(keywords []string) []Entity.Place {
 	apiKey := os.Getenv("APIKEY")
-	url := client.baseURL() + client.formatquery([]string{"東京", "観光"}) + client.options() + "&key=" + apiKey
+	url := client.BaseURL() + client.Formatquery(keywords) + client.Options() + "&key=" + apiKey
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -38,17 +38,28 @@ func (client APIClient) Get(keywords []string) Entity.Place {
 		log.Fatal(err)
 	}
 
-	address := res.(map[string]interface{})["results"].([]interface{})[0].(map[string]interface{})["formatted_address"].(string)
-	name := res.(map[string]interface{})["results"].([]interface{})[0].(map[string]interface{})["name"].(string)
-	placeID := res.(map[string]interface{})["results"].([]interface{})[0].(map[string]interface{})["place_id"].(string)
-	photoReference := res.(map[string]interface{})["results"].([]interface{})[0].(map[string]interface{})["photos"].([]interface{})[0].(map[string]interface{})["photo_reference"].(string)
+	var places []Entity.Place
+	var results interface{} = res.(map[string]interface{})["results"]
 
-	place := Entity.Place{
-		Address:        address,
-		Name:           name,
-		PlaceID:        placeID,
-		PhotoReference: photoReference,
+	switch results.(type) {
+	case []interface{}:
+		for _, result := range results.([]interface{}) {
+			address := result.(map[string]interface{})["formatted_address"].(string)
+			name := result.(map[string]interface{})["name"].(string)
+			placeID := result.(map[string]interface{})["place_id"].(string)
+			photoReference := result.(map[string]interface{})["photos"].([]interface{})[0].(map[string]interface{})["photo_reference"].(string)
+
+			place := Entity.Place{
+				Address:        address,
+				Name:           name,
+				PlaceID:        placeID,
+				PhotoReference: photoReference,
+			}
+
+			places = append(places, place)
+		}
+	default:
 	}
 
-	return place
+	return places
 }
