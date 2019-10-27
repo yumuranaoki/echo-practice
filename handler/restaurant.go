@@ -8,7 +8,7 @@ import (
 	"github.com/yumuranaoki/date/entity/googlemap/strategy"
 )
 
-func LeisureHandler(c echo.Context) (err error) {
+func RestaurantHandler(c echo.Context) (err error) {
 	placeIDStrategy := strategy.PlaceID{}
 
 	client := googlemap.APIClient{
