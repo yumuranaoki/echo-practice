@@ -9,15 +9,15 @@ import (
 )
 
 func LeisureHandler(c echo.Context) (err error) {
-	textSearch := strategy.TextSearch{}
+	placeIDStrategy := strategy.PlaceID{}
 
 	client := googlemap.APIClient{
-		Strategy: textSearch,
+		Strategy: placeIDStrategy,
 	}
 
-	place := c.QueryParam("place")
+	placeID := c.QueryParam("place_id")
 
-	places := client.Get([]string{place, "観光"})
+	places := client.Get([]string{placeID})
 
 	return c.JSON(http.StatusOK, places)
 }

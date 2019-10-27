@@ -10,19 +10,22 @@ import (
 	Entity "github.com/yumuranaoki/date/entity"
 )
 
+// APIClient is client for googlemap api
 type APIClient struct {
 	Strategy
 }
 
+// Strategy specify how to generate URL
 type Strategy interface {
 	Formatquery([]string) string
 	BaseURL() string
 	Options() string
+	Parse(interface{}) []Entity.Place
 }
 
+// Get returns place information
 func (client APIClient) Get(keywords []string) []Entity.Place {
-	apiKey := os.Getenv("APIKEY")
-	url := client.BaseURL() + client.Formatquery(keywords) + client.Options() + "&key=" + apiKey
+	url := client.generateURL(keywords)
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -38,28 +41,13 @@ func (client APIClient) Get(keywords []string) []Entity.Place {
 		log.Fatal(err)
 	}
 
-	var places []Entity.Place
-	var results interface{} = res.(map[string]interface{})["results"]
-
-	switch results.(type) {
-	case []interface{}:
-		for _, result := range results.([]interface{}) {
-			address := result.(map[string]interface{})["formatted_address"].(string)
-			name := result.(map[string]interface{})["name"].(string)
-			placeID := result.(map[string]interface{})["place_id"].(string)
-			photoReference := result.(map[string]interface{})["photos"].([]interface{})[0].(map[string]interface{})["photo_reference"].(string)
-
-			place := Entity.Place{
-				Address:        address,
-				Name:           name,
-				PlaceID:        placeID,
-				PhotoReference: photoReference,
-			}
-
-			places = append(places, place)
-		}
-	default:
-	}
+	places := client.Parse(res)
 
 	return places
+}
+
+func (client APIClient) generateURL(keywords []string) string {
+	apiKey := os.Getenv("APIKEY")
+
+	return client.BaseURL() + client.Formatquery(keywords) + client.Options() + "&key=" + apiKey
 }
