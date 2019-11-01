@@ -11,13 +11,19 @@ import (
 func RestaurantHandler(c echo.Context) (err error) {
 	placeIDStrategy := strategy.PlaceID{}
 
-	client := googlemap.APIClient{
+	IDclient := googlemap.APIClient{
 		Strategy: placeIDStrategy,
 	}
 
 	placeID := c.QueryParam("place_id")
+	locality := IDclient.Get([]string{placeID})[0].Name
 
-	places := client.Get([]string{placeID})
+	textSearchStrategy := strategy.TextSearch{}
+	textSearchClient := googlemap.APIClient{
+		Strategy: textSearchStrategy,
+	}
+
+	places := textSearchClient.Get([]string{locality, "レストラン"})
 
 	return c.JSON(http.StatusOK, places)
 }

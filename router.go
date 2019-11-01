@@ -10,6 +10,7 @@ func newRouter() *echo.Echo {
 	e := echo.New()
 
 	e.GET("/leisures", handler.LeisureHandler)
+	e.GET("/restaurants", handler.RestaurantHandler)
 
 	return e
 }

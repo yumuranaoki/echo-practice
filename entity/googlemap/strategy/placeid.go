@@ -22,12 +22,12 @@ func (p PlaceID) Parse(res interface{}) []Entity.Place {
 	var places []Entity.Place = []Entity.Place{}
 	var result interface{} = res.(map[string]interface{})["result"]
 
-	var addressComponents interface{} = result.(map[string]interface{})["address_components"]
+	addressComponents := result.(map[string]interface{})["address_components"]
 	switch addressComponents.(type) {
 	case []interface{}:
 		for _, component := range addressComponents.([]interface{}) {
 			longName := component.(map[string]interface{})["long_name"].(string)
-			types := component.(map[string]interface{})["types"].([]string)
+			types := component.(map[string]interface{})["types"].([]interface{})
 
 			if includeLocality(types) {
 				place := Entity.Place{
@@ -41,12 +41,14 @@ func (p PlaceID) Parse(res interface{}) []Entity.Place {
 				break
 			}
 		}
+	default:
+		places = []Entity.Place{}
 	}
 
 	return places
 }
 
-func includeLocality(arr []string) bool {
+func includeLocality(arr []interface{}) bool {
 	for _, el := range arr {
 		if el == "locality" {
 			return true
