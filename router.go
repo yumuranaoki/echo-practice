@@ -11,6 +11,7 @@ func newRouter() *echo.Echo {
 
 	e.GET("/leisures", handler.LeisureHandler)
 	e.GET("/restaurants", handler.RestaurantHandler)
+	e.GET("/summary", handler.SummaryHandler)
 
 	return e
 }

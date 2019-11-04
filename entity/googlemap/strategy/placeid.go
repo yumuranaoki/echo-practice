@@ -18,8 +18,8 @@ func (p PlaceID) Options() string {
 	return "&language=ja"
 }
 
-func (p PlaceID) Parse(res interface{}) []Entity.Place {
-	var places []Entity.Place = []Entity.Place{}
+func (p PlaceID) Parse(res interface{}) []Entity.MapInformation {
+	var mapInformations []Entity.MapInformation = []Entity.MapInformation{}
 	var result interface{} = res.(map[string]interface{})["result"]
 
 	addressComponents := result.(map[string]interface{})["address_components"]
@@ -30,22 +30,23 @@ func (p PlaceID) Parse(res interface{}) []Entity.Place {
 			types := component.(map[string]interface{})["types"].([]interface{})
 
 			if includeLocality(types) {
-				place := Entity.Place{
-					Name:           longName,
+				mapInformation := Entity.MapInformation{
+					Name:           "",
 					Address:        "",
 					PlaceID:        "",
 					PhotoReference: "",
+					LongName:       longName,
 				}
-				places = []Entity.Place{place}
+				mapInformations = []Entity.MapInformation{mapInformation}
 
 				break
 			}
 		}
 	default:
-		places = []Entity.Place{}
+		mapInformations = []Entity.MapInformation{}
 	}
 
-	return places
+	return mapInformations
 }
 
 func includeLocality(arr []interface{}) bool {

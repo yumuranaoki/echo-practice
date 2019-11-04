@@ -23,8 +23,8 @@ func (t TextSearch) Options() string {
 	return "&language=ja"
 }
 
-func (t TextSearch) Parse(res interface{}) []Entity.Place {
-	var places []Entity.Place
+func (t TextSearch) Parse(res interface{}) []Entity.MapInformation {
+	var mapInformations []Entity.MapInformation
 	var results interface{} = res.(map[string]interface{})["results"]
 
 	switch results.(type) {
@@ -35,18 +35,18 @@ func (t TextSearch) Parse(res interface{}) []Entity.Place {
 			placeID := result.(map[string]interface{})["place_id"].(string)
 			photoReference := result.(map[string]interface{})["photos"].([]interface{})[0].(map[string]interface{})["photo_reference"].(string)
 
-			place := Entity.Place{
+			mapInformation := Entity.MapInformation{
 				Address:        address,
 				Name:           name,
 				PlaceID:        placeID,
 				PhotoReference: photoReference,
 			}
 
-			places = append(places, place)
+			mapInformations = append(mapInformations, mapInformation)
 		}
 	default:
-		places = []Entity.Place{}
+		mapInformations = []Entity.MapInformation{}
 	}
 
-	return places
+	return mapInformations
 }

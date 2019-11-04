@@ -20,11 +20,11 @@ type Strategy interface {
 	Formatquery([]string) string
 	BaseURL() string
 	Options() string
-	Parse(interface{}) []Entity.Place
+	Parse(interface{}) []Entity.MapInformation
 }
 
 // Get returns place information
-func (client APIClient) Get(keywords []string) []Entity.Place {
+func (client APIClient) Get(keywords []string) []Entity.MapInformation {
 	url := client.generateURL(keywords)
 	resp, err := http.Get(url)
 
@@ -41,9 +41,9 @@ func (client APIClient) Get(keywords []string) []Entity.Place {
 		log.Fatal(err)
 	}
 
-	places := client.Parse(res)
+	mapInformations := client.Parse(res)
 
-	return places
+	return mapInformations
 }
 
 func (client APIClient) generateURL(keywords []string) string {

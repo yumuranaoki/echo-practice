@@ -16,14 +16,14 @@ func RestaurantHandler(c echo.Context) (err error) {
 	}
 
 	placeID := c.QueryParam("place_id")
-	locality := IDclient.Get([]string{placeID})[0].Name
+	locality := IDclient.Get([]string{placeID})[0].LongName
 
 	textSearchStrategy := strategy.TextSearch{}
 	textSearchClient := googlemap.APIClient{
 		Strategy: textSearchStrategy,
 	}
 
-	places := textSearchClient.Get([]string{locality, "レストラン"})
+	mapInformations := textSearchClient.Get([]string{locality, "レストラン"})
 
-	return c.JSON(http.StatusOK, places)
+	return c.JSON(http.StatusOK, mapInformations)
 }

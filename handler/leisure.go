@@ -17,7 +17,7 @@ func LeisureHandler(c echo.Context) (err error) {
 
 	place := c.QueryParam("place")
 
-	places := client.Get([]string{place, "観光"})
+	mapInformations := client.Get([]string{place, "観光"})
 
-	return c.JSON(http.StatusOK, places)
+	return c.JSON(http.StatusOK, mapInformations)
 }
