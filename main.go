@@ -1,7 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 
 	"github.com/yumuranaoki/date/handler"
 )
@@ -18,6 +21,12 @@ func newRouter() *echo.Echo {
 
 func main() {
 	router := newRouter()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-	router.Start(":8000")
+	router.Use(middleware.Logger())
+
+	router.Start(":" + port)
 }
